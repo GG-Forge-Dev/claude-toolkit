@@ -1,8 +1,8 @@
 {
   "name": "stive-toolkit",
-  "version": "1.3.0",
-  "description": "Reglas globales (idioma, calidad y desarrollo con IA), skills historia y pareja, y quality gate al terminar cada turno.",
+  "version": "1.4.0",
+  "description": "Reglas globales (idioma, calidad y desarrollo con IA), skills historia, pareja e interfaz, y quality gate al terminar cada turno.",
   "author": {
-    "name": "Parabellam"
+    "name": "GG Forge"
   }
 }

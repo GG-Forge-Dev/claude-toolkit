@@ -1,0 +1,4 @@
+# Productos con interfaz (web o app)
+- Cada producto tiene su propio diseño en `docs/diseno/DESIGN.md` (colores, tipografía, espaciado, tono) y su imagen de referencia en `docs/diseno/referencia.*`. No hay estilo común entre productos: no copies el de otro.
+- Al crear o cambiar una pantalla o un componente visible, usa la skill `interfaz` (sigue el `DESIGN.md` y mira el resultado en capturas antes de darlo por hecho).
+- Al **crear un producto nuevo**, monta desde el principio lo de `interfaz/montaje.md`: axe y capturas de pantallas clave en los E2E, reglas de arquitectura en el linter y Cloudflare Web Analytics. En un producto ya en marcha, solo si el usuario lo pide.

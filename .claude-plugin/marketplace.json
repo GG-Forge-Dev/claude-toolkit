@@ -1,15 +1,15 @@
 {
   "name": "stive",
   "owner": {
-    "name": "Parabellam"
+    "name": "GG Forge"
   },
-  "description": "Configuración personal de Claude Code: reglas y quality gate.",
+  "description": "Configuración de Claude Code de GG Forge: reglas, skills y quality gate.",
   "plugins": [
     {
       "name": "stive-toolkit",
       "source": "./plugins/toolkit",
-      "description": "Reglas globales (idioma, calidad y desarrollo con IA), skills historia y pareja, y quality gate al terminar cada turno.",
-      "version": "1.3.0"
+      "description": "Reglas globales (idioma, calidad y desarrollo con IA), skills historia, pareja e interfaz, y quality gate al terminar cada turno.",
+      "version": "1.4.0"
     }
   ]
 }

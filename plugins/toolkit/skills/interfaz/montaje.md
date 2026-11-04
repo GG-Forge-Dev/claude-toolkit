@@ -63,9 +63,10 @@ Las reglas de capas de los ADR se comprueban en el CI, no se dejan escritas sola
 
 Gratis y sin cookies. Una sola cuenta de Cloudflare para todos los productos.
 
-- **Dominio en la zona de Cloudflare** (p. ej. `<producto>.gg-forge.com`): crear el sitio en *Analytics & Logs → Web Analytics* con instalación automática y comprobar que el HTML servido incluye `static.cloudflareinsights.com/beacon.min.js`. Si no aparece (algunas respuestas de Workers), usar el snippet.
-- **Fuera de Cloudflare**: el snippet en el layout:
-  `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "<site tag>"}'></script>`.
-  El token es público (va en el HTML), no es un secreto.
+- **Web servida por un Worker o fuera de Cloudflare** (lo normal en nuestros productos): crear en *Analytics & Logs → Web Analytics* un sitio **manual** con el hostname del producto (no el automático de la zona: su token solo vale para el `/cdn-cgi/rum` propio y el envío falla por CORS) y poner su snippet en el layout:
+  `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "<token del sitio>"}'></script>`.
+  El token es público (va en el HTML), no es un secreto. Ejemplo funcionando: `src/layouts/Base.astro` del repo `web`.
+- **Página estática detrás del proxy, sin Worker**: basta la instalación automática; comprueba que el HTML servido incluye `beacon.min.js`.
+- Comprueba en el navegador, en producción, que la petición a `cloudflareinsights.com/cdn-cgi/rum` no da error de CORS.
 - Si hay `Content-Security-Policy`: `script-src https://static.cloudflareinsights.com` y `connect-src https://cloudflareinsights.com`.
 - Apps nativas (Capacitor, Tauri, Expo): no aplica tal cual; decidir con el usuario.

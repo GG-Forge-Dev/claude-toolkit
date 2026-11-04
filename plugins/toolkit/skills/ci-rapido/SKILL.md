@@ -1,6 +1,6 @@
 ---
 name: ci-rapido
-description: Use al montar o cambiar el CI de un repo (GitHub Actions), cuando el CI tarda mucho o se queda en cola, o al escribir tests de integración contra una base de datos real. Hace el CI rápido sin quitar ninguna comprobación ni test: medir primero, base de datos plantilla, jobs en paralelo sin choques y limpieza aunque se cancele.
+description: "Use al montar o cambiar el CI de un repo (GitHub Actions), cuando el CI tarda mucho o se queda en cola, o al escribir tests de integración contra una base de datos real. Hace el CI rápido sin quitar ninguna comprobación ni test: medir primero, base de datos plantilla, jobs en paralelo sin choques y limpieza aunque se cancele."
 ---
 
 # CI rápido sin perder calidad

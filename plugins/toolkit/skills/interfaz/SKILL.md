@@ -1,0 +1,39 @@
+---
+name: interfaz
+description: Use al crear o cambiar una pantalla, una página o un componente visible de un producto (web o app). Hace que la interfaz siga el diseño propio del producto (docs/diseno/DESIGN.md y su imagen de referencia) y que la mires en capturas de móvil y escritorio, con sus estados y su accesibilidad, antes de darla por terminada.
+---
+
+# Interfaz
+
+Que lo que ve el cliente sea coherente, cuidado y accesible, sin gastar de más. Cada producto tiene su propia identidad: el diseño sale de **su** `DESIGN.md`, nunca de otro producto ni de un estilo por defecto.
+
+## 1. Antes de tocar la pantalla
+
+- Lee `docs/diseno/DESIGN.md` del producto. Mira la imagen `docs/diseno/referencia.*` solo si la pantalla es nueva o si el `DESIGN.md` no aclara algo (una imagen cuesta muchos tokens).
+- **Si no hay `DESIGN.md`**: dilo en una línea y propón crearlo con `plantilla-design.md` (a partir de la referencia de Andrés o, si no la hay, de cómo se ve hoy el producto). Mientras tanto, imita las pantallas que ya existen.
+- Reutiliza los componentes y tokens del producto. Un color, una fuente o un tamaño que no esté en el `DESIGN.md` no se inventa: se propone añadirlo allí.
+
+## 2. Mírala antes de darla por hecha
+
+Captura **solo la pantalla que cambiaste**, en móvil (390×844) y escritorio (1280×800), con el navegador integrado o Playwright, y mírala de verdad: ¿se parece al `DESIGN.md`? ¿algo cortado, desalineado o ilegible? Si es una captura de verificación, usa escala reducida.
+
+Revisa solo los estados que aplican a esa pantalla:
+
+- **Vacío** (sin datos), **cargando**, **error** (incluido sin conexión si el producto funciona offline).
+- **Texto largo** (nombres largos, otros idiomas si el producto los tiene) y números grandes.
+- **Teclado**: se llega a todo con Tab, el foco se ve y Escape cierra lo que se abre.
+- **Modo oscuro**, solo si el producto lo tiene.
+
+## 3. Accesibilidad
+
+- Si los E2E del producto ya pasan axe, basta con que sigan en verde.
+- Si no: contraste suficiente (4.5:1 en texto normal), cada botón e input con nombre o etiqueta, imágenes con `alt`, objetivos táctiles de al menos 44 px y nada que dependa solo del color.
+- Para una pantalla nueva entera o un flujo de compra/registro, pasa además la skill `design:accessibility-review` si está instalada. Para cambios pequeños no hace falta.
+
+## 4. Al terminar
+
+Una línea: qué pantallas y estados miraste y qué corregiste. Si algo no se pudo comprobar (p. ej. no hay datos para el estado vacío), dilo.
+
+## Montar esto en un producto nuevo
+
+Ver `montaje.md` (axe y capturas en los E2E, reglas de arquitectura y Cloudflare Web Analytics). Léelo solo al montar un producto o si el usuario lo pide.

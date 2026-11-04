@@ -1,6 +1,6 @@
 # claude-toolkit
 
-Mi configuración de Claude Code, portable a cualquier PC.
+Configuración de Claude Code de GG Forge, portable a cualquier PC.
 
 ## Qué incluye
 
@@ -8,6 +8,7 @@ Mi configuración de Claude Code, portable a cualquier PC.
 |---|---|
 | Plugin `stive-toolkit` | Reglas globales (idioma español, calidad de código, desarrollo con IA: especificar justo a tiempo, proceso proporcional al tamaño y verificar ejecutando) inyectadas en cada sesión |
 | Skills `historia` y `pareja` | Claude las usa solo, sin `/`: `historia` antes de una funcionalidad nueva (criterios de aceptación, mini plan, fuera de alcance) y `pareja` en código delicado (pagos, auth, borrado de datos…: lista de tests aprobada y ciclos rojo → verde). Adaptadas de [hola-ai](https://github.com/nschurmann/hola-ai) (MIT) |
+| Skill `interfaz` y regla de productos | Al tocar una pantalla, Claude sigue el diseño propio del producto (`docs/diseno/DESIGN.md` y su imagen de referencia) y la revisa en capturas de móvil y escritorio, con sus estados y accesibilidad. Al crear un producto nuevo, monta axe y capturas en los E2E, reglas de arquitectura en el linter y Cloudflare Web Analytics (`skills/interfaz/montaje.md`) |
 | Quality gate (hook Stop) | Al terminar cada turno ejecuta typecheck, lint, Knip y clippy/fmt sobre los archivos cambiados. Bloquea solo si hay errores en lo que cambió Claude |
 | `setup/install.*` | Instala y configura RTK (`rtk init -g`), graphify, superpowers, context7 y este plugin |
 
@@ -20,7 +21,7 @@ Los **conectores** y las **skills de claude.ai** no van aquí: viajan con tu cue
 Requisitos: Claude Code, Node.js y Git.
 
 ```powershell
-git clone https://github.com/Parabellam/claude-toolkit.git
+git clone https://github.com/GG-Forge-Dev/claude-toolkit.git
 cd claude-toolkit
 powershell -ExecutionPolicy Bypass -File setup\install.ps1
 ```

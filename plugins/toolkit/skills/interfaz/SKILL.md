@@ -10,7 +10,11 @@ Que lo que ve el cliente sea coherente, cuidado y accesible, sin gastar de más.
 ## 1. Antes de tocar la pantalla
 
 - Lee `docs/diseno/DESIGN.md` del producto. Mira la imagen `docs/diseno/referencia.*` solo si la pantalla es nueva o si el `DESIGN.md` no aclara algo (una imagen cuesta muchos tokens).
-- **Si no hay `DESIGN.md`**: dilo en una línea y propón crearlo con `plantilla-design.md` (a partir de la referencia de Andrés o, si no la hay, de cómo se ve hoy el producto). Mientras tanto, imita las pantallas que ya existen.
+- **Si no hay `DESIGN.md`, para antes de hacer pantallas y pregunta al usuario** (una sola pregunta) cómo seguir:
+  1. **Me pasas una imagen de referencia** (la que prepara Andrés): la guardo en `docs/diseno/referencia.*` y escribo el `DESIGN.md` a partir de ella con `plantilla-design.md`.
+  2. **Lo diseño yo con `/design`**: propongo el diseño, lo apruebas, y con eso escribo el `DESIGN.md`.
+  3. **Si el producto ya tiene pantallas**: escribo el `DESIGN.md` a partir de cómo se ve hoy.
+  No sigas con la interfaz hasta tener la respuesta. Si el usuario dice que siga sin diseño, imita las pantallas que ya existen y recuérdalo al terminar.
 - Reutiliza los componentes y tokens del producto. Un color, una fuente o un tamaño que no esté en el `DESIGN.md` no se inventa: se propone añadirlo allí.
 
 ## 2. Mírala antes de darla por hecha

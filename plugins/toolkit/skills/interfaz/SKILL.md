@@ -40,4 +40,4 @@ Una línea: qué pantallas y estados miraste y qué corregiste. Si algo no se pu
 
 ## Montar esto en un producto nuevo
 
-Ver `montaje.md` (axe y capturas en los E2E, reglas de arquitectura y Cloudflare Web Analytics). Léelo solo al montar un producto o si el usuario lo pide.
+Ver `montaje.md` (axe y capturas en los E2E, reglas de arquitectura y analíticas: Cloudflare Web Analytics o Umami si hay que medir clics). Léelo solo al montar un producto o si el usuario lo pide.

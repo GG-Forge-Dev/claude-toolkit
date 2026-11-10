@@ -1,6 +1,6 @@
 {
   "name": "stive-toolkit",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Reglas globales (idioma, calidad, desarrollo con IA, productos y datos), skills historia, pareja, interfaz, ci-rapido y escrituras, agente auditor-escrituras y quality gate al terminar cada turno.",
   "author": {
     "name": "GG Forge"

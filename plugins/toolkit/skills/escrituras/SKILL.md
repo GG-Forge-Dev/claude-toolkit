@@ -1,6 +1,6 @@
 ---
 name: escrituras
-description: Use al crear o cambiar un endpoint, server action, mutación o pantalla que crea, edita o borra datos; al escribir una migración o tabla nueva; o cuando un test falla a veces y otras no. Evita duplicados, condiciones de carrera, borrados indebidos y tests frágiles - la regla va en la base de datos, cada escritura y borrado lleva su batería de tests y los tests no dependen de los datos de partida.
+description: Use al crear o cambiar un endpoint, server action, mutación o pantalla que crea, edita o borra datos; al escribir una migración o tabla nueva; o cuando un test falla a veces y otras no. Evita duplicados, condiciones de carrera, borrados indebidos, recargas repetidas después de guardar y tests frágiles - la regla va en la base de datos, cada escritura y borrado lleva su batería de tests y los tests no dependen de los datos de partida.
 ---
 
 # Escrituras seguras
@@ -38,6 +38,11 @@ Ayuda, no garantiza:
 - Botón deshabilitado mientras se envía (`isPending`, `useFormStatus`) y la misma clave de idempotencia si se reintenta.
 - El 409 se muestra junto al campo («Ya existe una categoría con ese nombre»), no como error genérico.
 - Si hay actualización optimista, se deshace cuando el servidor rechaza.
+- **Una sola recarga por cambio.** Caso real (skalpos, 2026-11): al guardar un insumo, la mutación invalidaba la lista (`onSuccess`) y, 100 ms después, el aviso del tiempo real del **mismo** cambio la invalidaba otra vez: cada consulta salía dos veces en toda la app, y nadie lo vio hasta que el dueño abrió Network. Reglas:
+  - Una sola fuente de recarga por cambio. Con tiempo real, la mutación no invalida a ciegas: espera el aviso de ese tema (cualquier aviso que llega **después** de la respuesta trae datos que ya incluyen lo guardado) y, si no llega en unos segundos, recarga solo lo que faltó. Sin tiempo real (sin conexión o sin flujo), recarga enseguida.
+  - Varios avisos seguidos del mismo cambio (la cuenta, las mesas, el pedido) se juntan en una recarga: marca las consultas como viejas al instante y recárgalas una vez tras una ventana corta (~40 ms).
+  - Recarga solo lo que una pantalla muestra (en TanStack Query, `type: 'active'`); lo demás queda marcado como viejo y se pide al volver a montarse.
+  - El test lo cuenta: una prueba unitaria (guardar + su aviso = 1 petición) y un E2E que cuenta los GET de la lista tras guardar (`page.on('request')`), esperando más que el respaldo.
 
 ## 4. Tests de cada escritura y borrado
 

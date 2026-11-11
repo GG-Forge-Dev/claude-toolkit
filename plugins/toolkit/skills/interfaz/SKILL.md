@@ -26,6 +26,7 @@ Revisa solo los estados que aplican a esa pantalla:
 - **Vacío** (sin datos), **cargando**, **error** (incluido sin conexión si el producto funciona offline).
 - **Texto largo** (nombres largos, otros idiomas si el producto los tiene) y números grandes.
 - **Teclado**: se llega a todo con Tab, el foco se ve y Escape cierra lo que se abre.
+- **Red**: si la pantalla guarda o carga datos, mira las peticiones de la acción (pestaña Network o `read_network_requests`): cada consulta una sola vez, sin repetidas tras guardar (ver la skill `escrituras`, «Una sola recarga por cambio»).
 - **Modo oscuro**, solo si el producto lo tiene.
 
 ## 3. Accesibilidad

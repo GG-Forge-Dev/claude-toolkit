@@ -35,7 +35,17 @@ Antes de escribir el endpoint, decide qué **no** puede pasar y ponlo en el esqu
 ## 3. La interfaz
 
 Ayuda, no garantiza:
-- Botón deshabilitado mientras se envía (`isPending`, `useFormStatus`) y la misma clave de idempotencia si se reintenta.
+- **Doble clic.** Caso real (skalpos, 2026-11-12): «Guardar» tenía `disabled={isPending}` y aun así un `dblclick()` creó dos categorías, porque el segundo clic llega antes de que React vuelva a pintar el botón.
+  - La protección va **una vez, en el hook común de mutaciones** (`useBackendMutation` o equivalente): una marca síncrona (un `Map` en un `useRef`, no estado de React) con la clave de los datos (`JSON.stringify(vars)`); mientras la primera va en camino, `mutate` ignora la igual y `mutateAsync` devuelve la promesa de la primera. Datos distintos (otra fila) salen en paralelo. Se suelta al terminar, bien o mal.
+  - Lo que se repite a propósito con los mismos datos (un «+1 entra», sumar una unidad) pasa `{ repeatable: true }`.
+  - Además, el botón se deshabilita mientras se envía (`isPending`, `useFormStatus`) para que se vea, con el estado puesto **antes** del primer `await`; y la misma clave de idempotencia si se reintenta.
+  - Botones de ícono en listas y toques en tarjetas también cuentan: son los que más se olvidan.
+  - Excepción consciente: un «+1» que suma unidades puede tocarse dos veces a propósito; ahí lo que no se repite es el envío o el cobro.
+  - Test: E2E con `dblclick()` (o dos clics seguidos) que cuenta los POST de esa ruta y espera exactamente 1.
+- **Búsquedas al escribir.** Caso real (skalpos, 2026-11-12): «Cliente» de la cuenta pedía `/customers/names` por cada letra de «daniel rojas». Reglas:
+  - Debounce de ~300 ms en un solo lugar del producto (hook `useDebouncedValue` o equivalente) y aplicado **dentro** del hook de datos de la búsqueda, no en cada pantalla: así ninguna lo olvida.
+  - El campo responde al instante; solo la consulta espera. Con TanStack Query, `placeholderData: keepPreviousData` para que la lista no parpadee.
+  - Test: E2E que escribe letra por letra (`pressSequentially(texto, { delay: 60 })`) y cuenta los GET de la búsqueda: 1 al terminar (más la de vacío al abrir, si la hay).
 - El 409 se muestra junto al campo («Ya existe una categoría con ese nombre»), no como error genérico.
 - Si hay actualización optimista, se deshace cuando el servidor rechaza.
 - **Una sola recarga por cambio.** Caso real (skalpos, 2026-11): al guardar un insumo, la mutación invalidaba la lista (`onSuccess`) y, 100 ms después, el aviso del tiempo real del **mismo** cambio la invalidaba otra vez: cada consulta salía dos veces en toda la app, y nadie lo vio hasta que el dueño abrió Network. Reglas:
@@ -43,6 +53,24 @@ Ayuda, no garantiza:
   - Varios avisos seguidos del mismo cambio (la cuenta, las mesas, el pedido) se juntan en una recarga: marca las consultas como viejas al instante y recárgalas una vez tras una ventana corta (~40 ms).
   - Recarga solo lo que una pantalla muestra (en TanStack Query, `type: 'active'`); lo demás queda marcado como viejo y se pide al volver a montarse.
   - El test lo cuenta: una prueba unitaria (guardar + su aviso = 1 petición) y un E2E que cuenta los GET de la lista tras guardar (`page.on('request')`), esperando más que el respaldo.
+
+## 3b. Validar cada campo
+
+Caso real (skalpos, 2026-11-12): una auditoría encontró compras de inventario sin tope (una cantidad absurda desbordaba el stock), el NIT de Ajustes sin la regla del país, nombres con saltos de línea que rompían el tiquete y el XML de la DIAN, reservas para el año 2999 y unos 30 campos de la web sin largo máximo. Para cada campo de entrada, en el servidor (esquema del API y/o dominio) y con su CHECK en la base cuando aplique:
+
+| Tipo | Qué validar |
+|---|---|
+| Texto | Largo máximo siempre. Obligatorio: se recorta antes de validar (solo espacios no cuenta) y largo mínimo. Una línea (nombres, notas, motivos, todo lo que se imprime o va a un XML): sin saltos ni caracteres de control. Normalizar: recortar, colapsar espacios. |
+| Números | Mínimo **y** máximo, también los que «no pueden ser grandes»: el máximo frena errores de digitación y desbordes. Enteros donde va entero; dinero en enteros, nunca `float`. |
+| Fechas y horas | Formato y un rango razonable (ni 1900 ni 2999; una reserva no en el pasado ni a años), fin ≥ inicio, y la zona horaria del negocio al comparar «hoy». |
+| Formatos | Correo, celular, documento o NIT, URL: validados en el servidor y guardados normalizados (correo en minúsculas, celular solo dígitos). Las reglas que cambian por país (formato del NIT o del documento) salen de un catálogo de países que se puede editar, no del código; si no hay cómo mantenerlas al día, valida solo lo seguro (largo, caracteres permitidos). |
+| Opciones | Enum en el servidor: solo los valores válidos. |
+| Listas y archivos | `maxItems` en listas (carritos, lotes, importaciones); tamaño máximo del cuerpo; archivos con tamaño y tipo comprobados por contenido, no por la extensión. |
+| Lo que sale | Texto del usuario escapado al pintarlo (HTML) e inyección de fórmulas en los CSV exportados (celdas que empiezan por `=`, `+`, `-` o `@`). |
+
+- **Un solo archivo de límites en la web** (p. ej. `lib/limits.ts`) con el mismo valor del esquema del API y de dónde sale; el input lleva `maxLength`, `inputMode`/`type` y el error junto al campo, en el idioma del usuario.
+- Solo si el producto ya tiene datos de clientes en producción: antes de endurecer una regla, cuenta cuántos registros la romperían; si hay, valida solo cuando el valor cambia y avisa al usuario. En un producto sin clientes todavía, valida siempre.
+- Test: por cada regla nueva, el caso que la rompe (422 o error de validación y la base sin cambios) y el borde que sí entra.
 
 ## 4. Tests de cada escritura y borrado
 

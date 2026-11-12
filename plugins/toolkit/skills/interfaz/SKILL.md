@@ -29,6 +29,9 @@ Revisa solo los estados que aplican a esa pantalla:
 - **Red**: si la pantalla guarda o carga datos, mira las peticiones de la acción (pestaña Network o `read_network_requests`): cada consulta una sola vez, sin repetidas tras guardar (ver la skill `escrituras`, «Una sola recarga por cambio»).
   - Si tiene un buscador, escribe letra por letra: debe salir una petición al dejar de escribir, no una por letra.
   - Si tiene botones que guardan, dales doble clic: debe salir una sola petición y el botón quedar deshabilitado mientras tanto.
+- **Celular**: nada depende de pasar el mouse. Las ayudas largas van en un «¿Cómo funciona?» que se abre con un toque, no en un tooltip de hover; los objetivos táctiles miden al menos 44 px.
+- **Navegación**: toda pantalla a la que se llega desde otra tiene cómo volver en el celular (un «← Volver a X» visible), sin depender del botón atrás del sistema.
+- **Textos de ayuda**: cada paso que se le explica al usuario (asistentes, tooltips, «¿Cómo funciona?») sale de cómo funciona hoy el código, con los nombres reales de los botones; léelo antes de escribirlo.
 - **Modo oscuro**, solo si el producto lo tiene.
 
 ## 3. Accesibilidad

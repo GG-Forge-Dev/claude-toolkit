@@ -63,13 +63,13 @@ Caso real (skalpos, 2026-11-12): una auditoría encontró compras de inventario 
 | Texto | Largo máximo siempre. Obligatorio: se recorta antes de validar (solo espacios no cuenta) y largo mínimo. Una línea (nombres, notas, motivos, todo lo que se imprime o va a un XML): sin saltos ni caracteres de control. Normalizar: recortar, colapsar espacios. |
 | Números | Mínimo **y** máximo, también los que «no pueden ser grandes»: el máximo frena errores de digitación y desbordes. Enteros donde va entero; dinero en enteros, nunca `float`. |
 | Fechas y horas | Formato y un rango razonable (ni 1900 ni 2999; una reserva no en el pasado ni a años), fin ≥ inicio, y la zona horaria del negocio al comparar «hoy». |
-| Formatos | Correo, celular, documento o NIT (con la regla del país y el dígito de verificación), URL: validados en el servidor y guardados normalizados (correo en minúsculas, celular solo dígitos). |
+| Formatos | Correo, celular, documento o NIT, URL: validados en el servidor y guardados normalizados (correo en minúsculas, celular solo dígitos). Las reglas que cambian por país (formato del NIT o del documento) salen de un catálogo de países que se puede editar, no del código; si no hay cómo mantenerlas al día, valida solo lo seguro (largo, caracteres permitidos). |
 | Opciones | Enum en el servidor: solo los valores válidos. |
 | Listas y archivos | `maxItems` en listas (carritos, lotes, importaciones); tamaño máximo del cuerpo; archivos con tamaño y tipo comprobados por contenido, no por la extensión. |
 | Lo que sale | Texto del usuario escapado al pintarlo (HTML) e inyección de fórmulas en los CSV exportados (celdas que empiezan por `=`, `+`, `-` o `@`). |
 
 - **Un solo archivo de límites en la web** (p. ej. `lib/limits.ts`) con el mismo valor del esquema del API y de dónde sale; el input lleva `maxLength`, `inputMode`/`type` y el error junto al campo, en el idioma del usuario.
-- Cambiar una validación en datos que ya existen: si la regla nueva rechazaría lo guardado (un NIT viejo mal escrito), valida solo cuando el valor cambia.
+- Solo si el producto ya tiene datos de clientes en producción: antes de endurecer una regla, cuenta cuántos registros la romperían; si hay, valida solo cuando el valor cambia y avisa al usuario. En un producto sin clientes todavía, valida siempre.
 - Test: por cada regla nueva, el caso que la rompe (422 o error de validación y la base sin cambios) y el borde que sí entra.
 
 ## 4. Tests de cada escritura y borrado

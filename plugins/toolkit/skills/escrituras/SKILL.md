@@ -71,6 +71,11 @@ Caso real (skalpos, 2026-11-12): una auditoría encontró compras de inventario 
 - **Un solo archivo de límites en la web** (p. ej. `lib/limits.ts`) con el mismo valor del esquema del API y de dónde sale; el input lleva `maxLength`, `inputMode`/`type` y el error junto al campo, en el idioma del usuario.
 - Solo si el producto ya tiene datos de clientes en producción: antes de endurecer una regla, cuenta cuántos registros la romperían; si hay, valida solo cuando el valor cambia y avisa al usuario. En un producto sin clientes todavía, valida siempre.
 - Test: por cada regla nueva, el caso que la rompe (422 o error de validación y la base sin cambios) y el borde que sí entra.
+- **Tests guardianes del esquema**: si el API publica su esquema (OpenAPI de Huma, FastAPI, Zod + openapi…), un test lo recorre y falla cuando un campo nuevo llega sin sus reglas. Así ninguna ruta nueva las olvida. En skalpos (2026-11-12) hay dos:
+  - todo texto obligatorio (`minLength ≥ 1`) lleva un `pattern` que no deja pasar uno hecho solo de espacios: `minLength` cuenta los espacios;
+  - todo número del cuerpo de una petición tiene `maximum` y toda lista tiene `maxItems` (los enums no cuentan).
+- Las fechas que llegan por la URL (reportes, listados) también llevan un rango de años, en un solo helper de lectura.
+- Los mensajes de las reglas del esquema (p. ej. `patternDescription`) se traducen en la web al idioma de la app, con el nombre del campo, igual que los demás errores de validación.
 
 ## 4. Tests de cada escritura y borrado
 

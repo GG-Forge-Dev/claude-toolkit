@@ -35,7 +35,15 @@ Antes de escribir el endpoint, decide qué **no** puede pasar y ponlo en el esqu
 ## 3. La interfaz
 
 Ayuda, no garantiza:
-- Botón deshabilitado mientras se envía (`isPending`, `useFormStatus`) y la misma clave de idempotencia si se reintenta.
+- **Doble clic.** Todo botón, fila o tecla que escribe queda deshabilitado mientras se envía (`isPending`, `useFormStatus`), y la misma clave de idempotencia si se reintenta.
+  - El estado de «enviando» se pone **antes** del primer `await`: un `setBusy(true)` después de un `await` deja pasar el segundo clic.
+  - Botones de ícono en listas y toques en tarjetas también cuentan: son los que más se olvidan.
+  - Excepción consciente: un «+1» que suma unidades puede tocarse dos veces a propósito; ahí lo que no se repite es el envío o el cobro.
+  - Test: E2E con `dblclick()` (o dos clics seguidos) que cuenta los POST de esa ruta y espera exactamente 1.
+- **Búsquedas al escribir.** Caso real (skalpos, 2026-11-12): «Cliente» de la cuenta pedía `/customers/names` por cada letra de «daniel rojas». Reglas:
+  - Debounce de ~300 ms en un solo lugar del producto (hook `useDebouncedValue` o equivalente) y aplicado **dentro** del hook de datos de la búsqueda, no en cada pantalla: así ninguna lo olvida.
+  - El campo responde al instante; solo la consulta espera. Con TanStack Query, `placeholderData: keepPreviousData` para que la lista no parpadee.
+  - Test: E2E que escribe letra por letra (`pressSequentially(texto, { delay: 60 })`) y cuenta los GET de la búsqueda: 1 al terminar (más la de vacío al abrir, si la hay).
 - El 409 se muestra junto al campo («Ya existe una categoría con ese nombre»), no como error genérico.
 - Si hay actualización optimista, se deshace cuando el servidor rechaza.
 - **Una sola recarga por cambio.** Caso real (skalpos, 2026-11): al guardar un insumo, la mutación invalidaba la lista (`onSuccess`) y, 100 ms después, el aviso del tiempo real del **mismo** cambio la invalidaba otra vez: cada consulta salía dos veces en toda la app, y nadie lo vio hasta que el dueño abrió Network. Reglas:

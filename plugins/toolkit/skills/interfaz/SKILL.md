@@ -27,6 +27,8 @@ Revisa solo los estados que aplican a esa pantalla:
 - **Texto largo** (nombres largos, otros idiomas si el producto los tiene) y números grandes.
 - **Teclado**: se llega a todo con Tab, el foco se ve y Escape cierra lo que se abre.
 - **Red**: si la pantalla guarda o carga datos, mira las peticiones de la acción (pestaña Network o `read_network_requests`): cada consulta una sola vez, sin repetidas tras guardar (ver la skill `escrituras`, «Una sola recarga por cambio»).
+  - Si tiene un buscador, escribe letra por letra: debe salir una petición al dejar de escribir, no una por letra.
+  - Si tiene botones que guardan, dales doble clic: debe salir una sola petición y el botón quedar deshabilitado mientras tanto.
 - **Modo oscuro**, solo si el producto lo tiene.
 
 ## 3. Accesibilidad

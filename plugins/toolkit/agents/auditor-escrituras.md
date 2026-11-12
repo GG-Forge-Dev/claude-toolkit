@@ -21,6 +21,8 @@ Responde en español.
    - Errores de la base que llegan como 500 (no se traduce `23505` / `P2002` / `UNIQUE constraint failed`).
    - Escrituras o borrados que no filtran por el dueño (riesgo de tocar datos de otro cliente).
    - Reintentos (cola offline, móvil) sin id del cliente ni clave de idempotencia.
+   - **Doble clic**: botones, filas, íconos o teclas que escriben y no quedan deshabilitados mientras la petición está en curso (sin `disabled={x.isPending}`, o con un `busy` puesto después del `await`). Ojo con reimprimir, mover posiciones (subir/bajar), borrar desde un diálogo y regenerar códigos: son los que más se olvidan. Un «+1» que suma unidades a propósito no es un hueco.
+   - **Búsquedas al escribir** que piden al servidor por cada letra (consultas cuya clave lleva el texto del campo sin debounce).
 4. **Tests**: para cada escritura, cuáles de estos existen: camino feliz con comprobación en la base, validación, sin sesión, otro cliente, duplicado, duplicado concurrente, reintento idempotente, borrado en uso / doble borrado. Señala tests que buscan por nombres que también trae la semilla, o que usan `.first()` para evitar coincidencias múltiples.
 
 ## Qué devuelves

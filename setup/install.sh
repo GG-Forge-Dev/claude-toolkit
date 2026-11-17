@@ -28,6 +28,8 @@ claude plugin marketplace add obra/superpowers-marketplace
 claude plugin install superpowers@superpowers-marketplace
 claude plugin marketplace add upstash/context7
 claude plugin install context7@context7-marketplace
+claude plugin marketplace add GoogleChrome/modern-web-guidance
+claude plugin install modern-web-guidance@googlechrome
 claude plugin marketplace add GG-Forge-Dev/claude-toolkit
 claude plugin install stive-toolkit@stive
 

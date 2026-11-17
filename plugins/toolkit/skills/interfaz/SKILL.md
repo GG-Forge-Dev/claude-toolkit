@@ -17,6 +17,22 @@ Que lo que ve el cliente sea coherente, cuidado y accesible, sin gastar de más.
   No sigas con la interfaz hasta tener la respuesta. Si el usuario dice que siga sin diseño, imita las pantallas que ya existen y recuérdalo al terminar.
 - Reutiliza los componentes y tokens del producto. Un color, una fuente o un tamaño que no esté en el `DESIGN.md` no se inventa: se propone añadirlo allí.
 
+## 1b. Constrúyela con lo que ya trae el navegador (solo web)
+
+En la parte web de un producto (no en backend, bots ni infraestructura), antes de construir una pieza
+con un patrón conocido, consulta la guía de Chrome, Edge, Firefox y MDN: así no salen patrones viejos ni
+librerías de más. Viene en el plugin `modern-web-guidance@googlechrome`, que se actualiza solo.
+- **Cuándo**: modales, popovers y menús; formularios y su validación; tablas; animaciones y transiciones;
+  modo oscuro; rendimiento (LCP, INP, CLS, imágenes); limpiar HTML del usuario; fechas y zonas horarias.
+  Para extensiones de Chrome, su skill `chrome-extensions`.
+- **Cómo**: sigue su skill (`search` y luego `retrieve`), pero ejecuta su CLI siempre con la versión más
+  nueva que lleve **al menos 7 días publicada**, nunca la recién salida: si una versión saliera
+  comprometida, suele detectarse en esos días. En Windows usa `npx.cmd`:
+  `npx -y --before=<fecha de hace 7 días, AAAA-MM-DD> modern-web-guidance@latest search "<consulta>"`.
+- **Todo en español**: no añadas su sección final «### Modern Web Guidance» en inglés. En la línea de
+  cierre de esta skill (punto 4) di, en español y sencillo, qué guías usaste y qué cambiaron.
+- Si el plugin no está instalado, sigue sin él y avisa al usuario en una línea.
+
 ## 2. Mírala antes de darla por hecha
 
 Captura **solo la pantalla que cambiaste**, en móvil (390×844) y escritorio (1280×800), con el navegador integrado o Playwright, y mírala de verdad: ¿se parece al `DESIGN.md`? ¿algo cortado, desalineado o ilegible? Si es una captura de verificación, usa escala reducida.

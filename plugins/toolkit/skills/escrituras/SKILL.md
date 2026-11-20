@@ -56,6 +56,8 @@ Ayuda, no garantiza:
 
 ## 3b. Validar cada campo
 
+Además de validar, lo que el usuario escribe se muestra y se escapa como dice la regla `06-seguridad` (datos por `textContent`, nada de `as Tipo` sobre valores del DOM, expresiones regulares sin ReDoS).
+
 Caso real (skalpos, 2026-11-12): una auditoría encontró compras de inventario sin tope (una cantidad absurda desbordaba el stock), el NIT de Ajustes sin la regla del país, nombres con saltos de línea que rompían el tiquete y el XML de la DIAN, reservas para el año 2999 y unos 30 campos de la web sin largo máximo. Para cada campo de entrada, en el servidor (esquema del API y/o dominio) y con su CHECK en la base cuando aplique:
 
 | Tipo | Qué validar |

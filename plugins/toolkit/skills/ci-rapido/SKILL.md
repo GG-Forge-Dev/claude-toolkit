@@ -26,6 +26,10 @@ Crear una base y aplicar todas las migraciones en cada test es lo que más tarda
 ## 3. Jobs en paralelo sin que choquen
 
 - Un runner solo ejecuta un job a la vez: con un runner, los jobs de un CI (y los de dos PR) hacen cola. En el runner propio (WSL del PC, porque la org no tiene minutos de Actions) se registran varios runners por repo; script de ejemplo: `C:\Users\stive\runner-propio\add-skalpos-runners.sh` (instalar servicios necesita el OK del usuario).
+- Hay un tope de runners por máquina. Todos los runners de todos los repos del PC comparten la memoria de WSL (9,7 GB). Con 6 runners de Skalpos y varios PR a la vez, WSL se quedó sin memoria (2026-11-19 y 2026-11-22): el OOM killer tumbó los runners y dejó contenedores huérfanos.
+  - Antes de registrar o activar otro runner, mira la memoria libre en WSL (`free -h`) y cuántos runners hay activos, de todos los repos (`systemctl list-units 'actions.runner.*'`).
+  - El tope por defecto es **3 runners por repo** en el PC de Stiven. Súbelo solo después de dos cosas: darle más memoria a WSL en `.wslconfig` y medir un CI con varios PR a la vez.
+  - Un runner instalado como servicio queda habilitado y vuelve a arrancar al reiniciar. Para quitar uno, usa `systemctl disable --now <unidad>`: con solo `stop` vuelve en el siguiente reinicio.
 - Varios runners en la misma máquina comparten puertos y Docker. Por eso:
   - servicios con puerto del host aleatorio (`ports: ['5432']` y leer `job.services.<svc>.ports['5432']`);
   - servidores de prueba en un puerto libre, nunca uno fijo;

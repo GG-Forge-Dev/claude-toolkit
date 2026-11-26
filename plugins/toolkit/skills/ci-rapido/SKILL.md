@@ -30,6 +30,21 @@ Crear una base y aplicar todas las migraciones en cada test es lo que más tarda
   - Antes de registrar o activar otro runner, mira la memoria libre en WSL (`free -h`) y cuántos runners hay activos, de todos los repos (`systemctl list-units 'actions.runner.*'`).
   - El tope por defecto es **3 runners por repo** en el PC de Stiven. Súbelo solo después de dos cosas: darle más memoria a WSL en `.wslconfig` y medir un CI con varios PR a la vez.
   - Un runner instalado como servicio queda habilitado y vuelve a arrancar al reiniciar. Para quitar uno, usa `systemctl disable --now <unidad>`: con solo `stop` vuelve en el siguiente reinicio.
+- Un runner con systemd tiene que levantarse solo. La unidad que crea `svc.sh install` trae `Restart=no` y `OOMPolicy=stop`: si el OOM killer mata un proceso del job, systemd para todo el servicio y nadie lo vuelve a arrancar. El 2026-11-26 el CI de Partii pasó 4 horas en cola por eso.
+  - Al registrar un runner (o el primero de una organización en esa máquina), crea el drop-in `/etc/systemd/system/actions.runner.<org hasta su primer guion>-.service.d/10-reinicio.conf`:
+    ```ini
+    [Unit]
+    StartLimitIntervalSec=0
+
+    [Service]
+    Restart=always
+    RestartSec=15
+    OOMPolicy=continue
+    ```
+  - `OOMPolicy=continue`: el OOM mata solo el proceso que toca y el runner sigue. `Restart=always` con `RestartSec=15`: si el runner cae por lo que sea, vuelve a los 15 s. `StartLimitIntervalSec=0`: systemd nunca se rinde de reintentar.
+  - systemd aplica el directorio `<prefijo>-.service.d` a toda unidad cuyo nombre empiece por ese prefijo hasta un guion. Con el nombre de la organización hasta su primer guion (`actions.runner.GG-` para GG-Forge-Dev) vale para todos los runners de esa organización, también los que se registren después.
+  - Después, `sudo systemctl daemon-reload` y `sudo systemctl restart <unidad>` de cada runner, y compruébalo con `systemctl show <unidad> -p Restart -p OOMPolicy -p DropInPaths` (debe decir `Restart=always`, `OOMPolicy=continue` y la ruta del drop-in). Escribir en `/etc/systemd` necesita el OK del usuario.
+  - Referencia en el PC de Stiven: `/etc/systemd/system/actions.runner.GG-.service.d/10-reinicio.conf`.
 - Varios runners en la misma máquina comparten puertos y Docker. Por eso:
   - servicios con puerto del host aleatorio (`ports: ['5432']` y leer `job.services.<svc>.ports['5432']`);
   - servidores de prueba en un puerto libre, nunca uno fijo;
@@ -42,6 +57,12 @@ Crear una base y aplicar todas las migraciones en cada test es lo que más tarda
 - Un contenedor que escribe como root en el workspace (p. ej. Playwright) hay que pararlo y devolver los archivos al usuario del runner; si no, el siguiente checkout falla con `EACCES`.
 - `concurrency` con `cancel-in-progress` en ramas de PR (no en `main`) para no gastar runner en commits viejos.
 
-## 5. El CI de `main` tras mergear
+## 5. Esperar el CI siempre con tope
+
+- Nunca un `gh run watch` sin límite: `timeout 45m gh run watch <id> --exit-status` (en segundo plano si la herramienta lo permite). Un runner caído deja el job en cola para siempre y un watch sin tope espera con él.
+- Si un job lleva más de 10 min en `queued`, mira los runners: `gh api repos/<org>/<repo>/actions/runners --jq '.runners[] | "\(.name) \(.status) ocupado=\(.busy)"'`.
+- Si el runner sale `offline`, revisa su servicio en la máquina (`systemctl status <unidad>` y `journalctl -u <unidad> -n 50`) y avisa al usuario en ese momento, con lo que viste; no esperes a que termine el tope.
+
+## 6. El CI de `main` tras mergear
 
 Si la rama principal no exige que el PR esté al día antes de mergear, el CI de `main` prueba algo nuevo (la mezcla real): se deja. Solo sobra si se exige estar al día o hay merge queue.

@@ -9,7 +9,7 @@
       "name": "stive-toolkit",
       "source": "./plugins/toolkit",
       "description": "Reglas globales (idioma, calidad, desarrollo con IA, productos, datos y seguridad), skills historia, pareja, interfaz, ci-rapido, escrituras y rendimiento, agente auditor-escrituras y quality gate al terminar cada turno.",
-      "version": "1.13.2"
+      "version": "1.13.3"
     }
   ]
 }
